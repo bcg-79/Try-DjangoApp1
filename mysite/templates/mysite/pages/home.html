@@ -1,0 +1,113 @@
+{% extends 'mysite/base.html' %}
+
+{% block title %} Home {% endblock %}
+
+{% block navlist %}
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'mysite:expaccounts' %}">Accounts</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'mysite:alltransactions' %}">All Transactions</a>
+  </li>
+{% endblock %}
+
+{% block rightsidebtn %}
+<div class="d-flex">
+    <a href="{% url 'accounts:logout_user' %}" class="btn btn-outline-success"> Logout </a>
+</div>
+{% endblock %}
+
+{% block content %}
+  <div class="container-fluid mt-3">
+    {% if active_acc %}
+    <div class="row">
+      <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+          <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Active Acc.- {{ active_acc.acc_name|title }}</h5>
+                  <h6 class="card-text text-info">Acc. Type : {{ active_acc.acc_type|title }}</h6>
+                  <h6 class="card-text text-success">Initial Amount : {{ active_acc.initial_amount }}</h6>
+                  <h6 class="card-text text-danger">Remaining Amount : {{ active_acc.rem_amount }}</h6>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+          <div class="container mt-3">
+            <div class="row">
+              <div class="col-sm-12 col-md-12 col-lg-8">
+              <form action="" method="post">
+                {% csrf_token %}
+                <div class="row">
+                  <div class="col">
+                    <label class="col-form-label col-form-label-sm">Add/Spend</label>
+                    {{ form.add_spend }}
+                  </div>
+                  <div class="col">
+                    <label class="col-form-label col-form-label-sm">{{ form.amount.label }}</label>
+                    {{ form.amount }}
+                    {% if form.amount.errors %}
+                      {% for error in form.amount.errors %}
+                        <span class="text-danger col-form-label-sm"> {{ error }} </span>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <label class="col-form-label col-form-label-sm">{{ form.person_name.label }}</label>
+                    {{ form.person_name }}
+                  </div>
+                  <div class="col">
+                    <label class="col-form-label col-form-label-sm">{{ form.category.label }}</label>
+                    {{ form.category }}
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col">
+                    <label class="col-form-label col-form-label-sm">{{ form.extra_note.label }}</label>
+                    {{ form.extra_note }}
+                  </div>
+                </div>
+                <div class="text-end">
+                <button type="submit" class="btn btn-sm btn-outline-secondary">Done!</button>
+              </div>
+              {% if exp_msg %}
+                  <p class="fw-lighter text-success">{{ exp_msg }}</p>
+              {% endif %}
+              {% if messages %}
+                  {% for message in messages %}
+                  <p class="text-danger">{{ message }}</p>
+                  {% endfor %}
+              {% endif %}
+              </form>
+            </div>
+          </div>
+          </div>
+      </div>
+      <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+        <div class="card">
+          
+          <div class="card-body">
+            <h5 class="card-title">Last Transactions</h5>
+          </div>
+          {% if last_tx %}
+          <ul class="list-group list-group-flush">
+            {% for tx in last_tx %}
+              {% if tx.add_spend == 0 %}
+               <li class="list-group-item text-danger">{{ tx.person_name }} Spend {{ tx.amount }}</li>
+              {% elif tx.add_spend == 1 %}
+               <li class="list-group-item text-success">{{ tx.person_name }} Add {{ tx.amount }}</li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+          {% endif %}
+          
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+{% endblock %}

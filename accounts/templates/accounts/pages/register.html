@@ -1,0 +1,61 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %} Register {% endblock %}
+
+{% block navlist %}
+<li class="nav-item">
+    <a class="nav-link" aria-current="page" href="{% url 'accounts:login' %}">Login</a>
+  </li>
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-sm-12 col-md-4 col-lg-4">
+            <form method="post" action="">
+                {% csrf_token %}
+                <div class="mb-3">
+                  <label class="form-label">{{ form.username.label }}</label>
+                  {{ form.username }}
+                  {% if form.username.errors %}
+                      {{ form.username.errors }}
+                  {% endif %}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">{{ form.first_name.label }}</label>
+                    {{ form.first_name }}
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">{{ form.last_name.label }}</label>
+                    {{ form.last_name }}
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">{{ form.email.label }}</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                      {{ form.email.errors }}
+                  {% endif %}
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">{{ form.password.label }}</label>
+                    {{ form.password }}
+                  </div>
+                <button type="submit" class="btn btn-secondary">Register</button>
+              </form>
+        </div>
+        <div class="col-sm-12 col-md-8 col-lg-8">
+          {% if messages %}
+              {% for message in messages %}
+                  {% if message.tags %}
+                       <div class="alert alert-{{ message.tags }} msg fade show" role="alert">{{ message }}</div>
+                  {% else %}
+                      <div class="alert alert-info msg fade show" role="alert">{{ message }}</div>
+                  {% endif %}
+              {% endfor %}
+          {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

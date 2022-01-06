@@ -1,0 +1,41 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %} Login {% endblock %}
+
+{% block navlist %}
+<li class="nav-item">
+    <a class="nav-link" aria-current="page" href="{% url 'accounts:register' %}">Register</a>
+  </li>
+{% endblock %}
+
+{% block content %}
+  <div class="container mt-3">
+    <div class="row">
+      <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+          <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label class="form-label">{{ form.username.label }}</label>
+              {{ form.username }}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">{{ form.password.label }}</label>
+              {{ form.password }}
+            </div>
+            {% if messages %}
+                {% for msg in messages %}
+                 <div class="mb-3">
+                   <span class="fw-lighter" style="color: crimson;"> {{ msg }} </span>
+                 </div>
+                {% endfor %}
+            {% endif %}
+            <button type="submit" class="btn btn-primary">Login</button>
+          </form>
+      </div>
+      <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+       <!--  Put something here....-->
+      </div>
+    </div>
+  </div>
+{% endblock %}

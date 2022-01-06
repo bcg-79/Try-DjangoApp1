@@ -1,0 +1,139 @@
+{% extends 'mysite/base.html' %}
+
+{% block title %} All Transactions {% endblock %}
+
+{% block navlist %}
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'mysite:home' %}">Home</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'mysite:expaccounts' %}">Accounts</a>
+</li>
+{% endblock %}
+
+{% block rightsidebtn %}
+<div class="d-flex">
+    <a href="{% url 'accounts:logout_user' %}" class="btn btn-outline-success"> Logout </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-3">
+  <div class="row">
+    <div class="col">
+
+    </div>
+    <div class="col">
+      {% if all_acc %}
+      <form action="" method="post">
+        {% csrf_token %}
+      <div class="input-group mb-3">
+        <select class="form-select" name="acc_id">
+          {% for acc in all_acc %}
+            {% if acc.status == 1 %}
+            <option value="{{ acc.id }}" selected>{{ acc.acc_name|title }}</option>
+            {% else %}
+            <option value="{{ acc.id }}" >{{ acc.acc_name|title }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+        <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Ok..</button>
+      </div>
+    </form>
+      {% endif %}
+    </div>
+    <div class="col">
+
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12 col-md-12 col-lg-3 col-xl-3">
+      {% if active_acc %}
+      <div class="card">
+        <div class="card-header">
+          Active Account
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">Acc. : {{ active_acc.acc_name|title }}</h5>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">No. Of Tx. : <b>{{ no_of_tx }}</b>
+               <span class="badge bg-success text-end">Add - {{ add_tx }}</span> 
+               <span class="badge bg-danger text-end">Spend - {{ spend_tx }}</span></li>
+            <li class="list-group-item">Initial Amount : <b class="text-success">{{ active_acc.initial_amount }}</b></li>
+            <li class="list-group-item">Remaining Amount : <b class="text-danger">{{ active_acc.rem_amount }}</b></li>
+            <li class="list-group-item">Date : {{ active_acc.date_created }}</li>
+          </ul>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    <div class="col-sm-12 col-md-12 col-lg-9 col-xl-9">
+      {% if page_obj %}
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Person Name</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Category</th>
+            <th scope="col">Date/Time</th>
+            <th scope="col">Add/Spend</th>
+            <th scope="col">Note's</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for tx in page_obj %}
+            {% if tx.add_spend == 0 %}
+            <tr class="table-danger">
+              <td>{{ tx.person_name|title }}</td>
+              <td>{{ tx.amount }}</td>
+              <td>{{ tx.category }}</td>
+              <td>{{ tx.date_time }}</td>
+              {% if tx.add_spend == 0 %}
+              <td>Spend</td>
+              {% elif tx.add_spend == 1 %}
+              <td>Add</td>
+              {% endif %}
+              <td>{{ tx.extra_note|slice:":30" }}</td>
+            </tr>
+            {% elif tx.add_spend == 1 %}
+            <tr class="table-success">
+              <td>{{ tx.person_name }}</td>
+              <td>{{ tx.amount }}</td>
+              <td>{{ tx.category }}</td>
+              <td>{{ tx.date_time }}</td>
+              {% if tx.add_spend == 0 %}
+              <td>Spend</td>
+              {% elif tx.add_spend == 1 %}
+              <td>Add</td>
+              {% endif %}
+              <td>{{ tx.extra_note|slice:":20" }}</td>
+            </tr>
+
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+      
+      <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+    
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+    
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+    {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}
